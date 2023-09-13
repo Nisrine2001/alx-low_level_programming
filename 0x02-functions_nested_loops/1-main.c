@@ -1,12 +1,12 @@
-#include "main.h"
-
-/**
- * main - check the code for Holberton School students.
- *
- * Return: Always 0.
- */
+#include <stdio.h>
 int main(void)
 {
-	/* print_alphabet(); */
-	return (0);
+    char str[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+    int i;
+    for (i = 0; i < 26; i++)
+    {
+        printf("%c", str[i]);
+    }
+    printf("\n");
+    return (0);
 }
