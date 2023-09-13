@@ -8,8 +8,7 @@
 /* Declaration of the print_alphabet function */
 void print_alphabet();
 
-int main()
-{
+int main() {
     /* Call the print_alphabet function */
     print_alphabet();
     return 0;
