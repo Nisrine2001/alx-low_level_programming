@@ -1,12 +1,13 @@
-#include <stdio.h>
+#include "main.h"
+
+/**
+ * main - check the code
+ *
+ * Return: Always 0.
+ */
+
 int main(void)
 {
-    char str[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-    int i;
-    for (i = 0; i < 26; i++)
-    {
-        printf("%c", str[i]);
-    }
-    printf("\n");
+   /* print_alphabet(); */
     return (0);
 }
