@@ -25,4 +25,3 @@ _putchar(48);
 return (0);
 }
 }
-
