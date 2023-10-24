@@ -23,4 +23,3 @@ free(node);
 }
 *head = NULL;
 }
-
