@@ -20,6 +20,6 @@ printed++;
 else if (printed)
 putchar('0');
 }
-if (printed)
+if (!printed)
 putchar('0');
 }
