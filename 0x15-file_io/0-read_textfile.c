@@ -22,18 +22,8 @@ if (fd == -1)
 return (0);
 
 n = read(fd, &buffer[0], letters);
-if (n == -1)
-{
-close(fd);
-return (0);
-}
-
 n = write(STDOUT_FILENO, &buffer[0], n);
-if (n == -1)
-{
 close(fd);
-return (0);
-}
 return (n);
 
 }
