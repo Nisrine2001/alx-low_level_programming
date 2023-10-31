@@ -1,46 +1,103 @@
 #include "main.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-#define USAGE "cp file_from file_to\n"
-#define ERR_NOREAD "error: can't read from file %s\n"
-#define ERR_NOWRITE
-#define ERR_NOCLOSE
-#define PERMISSIONS (S_IRUSR | S_IWUSR | S_IRGP | S_IWGRP | S_IROTH)
+char *create_buffer(char *file);
+void close_file(int fd);
 
 /**
- * main - program
+ * create_buffer - Allocates 1024 bytes for a buffer.
+ * @file: Name of the file buffer is storing chars for.
+ *
+ * Return: A pointer to the new-allocated buffer.
+ */
+char *create_buffer(char *file)
+{
+char *buffer;
+
+buffer = malloc(sizeof(char) * 1024);
+
+if (buffer == NULL)
+{
+dprintf(STDERR_FILENO,
+"Error: Can't write to %s\n", file);
+exit(99);
+}
+
+return (buffer);
+}
+
+/**
+ * close_file - Closes file descriptors
+ * @fd: The file descriptor to be close
+ */
+void close_file(int fd)
+{
+int a;
+
+a = close(fd);
+
+if (a == -1)
+{
+dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
+exit(100);
+}
+}
+
+/**
+ * main - program that copies the content of a file to another file
  * @ac: arguments counts
  * @av: arguments vectors
- * Return: 1 successed 0 failed
+ *
+ * Return: 0 on success.
+ *
+ * Description: If the argument count is incorrect - exit code 97.
+ * If file_outof does not exist or cannot be read - exit code 98.
+ * If file_to cannot be created or written to - exit code 99.
+ * If file_to or file_from cannot be closed - exit code 100.
  */
-int main(int ac, char **av)
+int main(int ac, char *av[])
 {
-int outof_fd = 0, to_fd = 0;
-ssize_t e;
-char buffer[READ_BUF_SIZE];
+int outof, to, rea, wrt;
+char *buffer;
 
 if (ac != 3)
-dprintf(USAGE, STDERR_FILENO), exit(97);
-outof_fd = open(av[1], O_RDONLY);
+{
+dprintf(STDERR_FILENO, "Usage: cp file_outof file_to\n");
+exit(97);
+}
 
-if (outof_fd == -1)
-dprintf(ERR_NOREAD, STDERR_FILENO, av[1]), exit(98);
-to_fd = open(av[2], O_CREAT | O_WRONLY | O_TRUNC, PERMISSIONS);
+buffer = create_buffer(av[2]);
+outof = open(av[1], O_RDONLY);
+rea = read(outof, buffer, 1024);
+to = open(av[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 
-if (to_fd == -1)
-dprintf(ERR_NOWRITE, STDERR_FILENO, av[2]), exit(99);
+do {
+if (outof == -1 || rea == -1)
+{
+dprintf(STDERR_FILENO,
+"Error: Can't read from file %s\n", av[1]);
+free(buffer);
+exit(98);
+}
 
-while ((e = read(outof_fd, buffer, READ_BUF_SIZE)) > 0)
-if (write(to_fd, buffer, e) != e)
-dprintf(ERR_NOWRITE, STDERR_FILENO, av[2]), exit(99);
-if (e == -1)
-dprintf(ERR_NOREAD, STDERR_FILENO, av[1]), exit(98);
+wrt = write(to, buffer, rea);
+if (to == -1 || wrt == -1)
+{
+dprintf(STDERR_FILENO,
+"Error: Can't write to %s\n", av[2]);
+free(buffer);
+exit(99);
+}
 
-outof_fd = close(outof_fd);
-to_fd = close(to_fd);
-if (outof_fd)
-dprintf(ERR_NOCLOSE, STDERR_FILENO, outof_fd), exit(100);
-if (to_fd)
-dprintf(ERR_NOCLOSE, STDERR_FILENO, outof_fd), exit(100);
+rea = read(outof, buffer, 1024);
+to = open(av[2], O_WRONLY | O_APPEND);
 
-return (EXIT_SUCCESS);
+} while (rea > 0);
+
+free(buffer);
+close_file(outof);
+close_file(to);
+
+return (0);
 }
